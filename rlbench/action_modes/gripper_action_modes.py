@@ -74,3 +74,39 @@ class Discrete(GripperActionMode):
 
     def action_shape(self, scene: Scene) -> tuple:
         return 1,
+
+
+class Continuous(GripperActionMode):
+    """Control the gripper in a continuous manner.
+
+    Action values > 0. will open the gripper, and values < 0.
+    will close the gripper. The magnitude of value will be multiplied to a max
+    velocity to decide the open/close velocity.
+
+    Note that unlike ``Discrete`` which always open/close the gripper to the end
+    by executing a loop, this action mode only actuates once each time.
+    """
+
+    def __init__(self, max_velocity: float=0.2):
+        """
+        Args:
+            max_velocity: the max velocity of opening and closing
+        """
+        self._max_velocity = max_velocity
+
+    def _actuate(self, action, scene):
+        #velocity = self._max_velocity * np.clip(action[0], -1., 1.)
+        action = float(action[0] > 0.)
+        scene.robot.gripper.actuate(action, velocity=self._max_velocity)
+        scene.pyrep.step()
+        scene.task.step()
+
+    def action(self, scene: Scene, action: np.ndarray):
+        assert_action_shape(action, self.action_shape(scene.robot))
+        if not (1. >= action[0] >= -1.):
+            raise InvalidActionError(
+                'Gripper action expected to be within -1. and 1.')
+        self._actuate(action, scene)
+
+    def action_shape(self, scene: Scene) -> tuple:
+        return 1,

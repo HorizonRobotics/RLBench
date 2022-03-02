@@ -11,7 +11,7 @@ class CameraConfig(object):
                  point_cloud=True,
                  mask=True,
                  image_size=(128, 128),
-                 render_mode=RenderMode.OPENGL3,
+                 render_mode=RenderMode.OPENGL,
                  masks_as_one_channel=True,
                  depth_in_meters=False):
         self.rgb = rgb
@@ -30,6 +30,9 @@ class CameraConfig(object):
         self.depth = value
         self.point_cloud = value
         self.mask = value
+
+    def __repr__(self):
+        return str(self.__dict__)
 
 
 class ObservationConfig(object):
@@ -106,3 +109,6 @@ class ObservationConfig(object):
         self.gripper_touch_forces = value
         self.wrist_camera_matrix = value
         self.task_low_dim_state = value
+
+    def __repr__(self):
+        return str(self.__dict__)

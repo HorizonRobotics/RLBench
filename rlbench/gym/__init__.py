@@ -26,3 +26,11 @@ for task_file in TASKS:
             'observation_mode': 'vision'
         }
     )
+    register(
+        id='%s-v0' % task_name,
+        entry_point='rlbench.gym:RLBenchEnv',
+        kwargs={
+            'task_class': task_class,
+            'observation_mode': 'custom'
+        }
+    )

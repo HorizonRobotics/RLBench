@@ -1,4 +1,4 @@
-from typing import List, Callable
+from typing import List, Callable, Tuple
 
 import numpy as np
 from pyrep import PyRep
@@ -447,6 +447,15 @@ class Scene(object):
         return (self._workspace_maxx > x > self._workspace_minx and
                 self._workspace_maxy > y > self._workspace_miny and
                 self._workspace_maxz > z > self._workspace_minz)
+
+    def get_workspace_boundaries(self) -> Tuple[np.ndarray]:
+        return (
+            np.array([self._workspace_minx,
+                      self._workspace_miny,
+                      self._workspace_minz]),
+            np.array([self._workspace_maxx,
+                      self._workspace_maxy,
+                      self._workspace_maxz]))
 
     def _demo_record_step(self, demo_list, record, func):
         if record:

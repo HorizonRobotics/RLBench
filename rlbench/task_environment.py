@@ -97,7 +97,7 @@ class TaskEnvironment(object):
         success, terminate = self._task.success()
         task_reward = self._task.reward()
         reward = float(success) if task_reward is None else task_reward
-        return self._scene.get_observation(), reward, terminate
+        return self._scene.get_observation(), reward, terminate, success
 
     def get_demos(self, amount: int, live_demos: bool = False,
                   image_paths: bool = False,

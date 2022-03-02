@@ -66,16 +66,31 @@ class Observation(object):
         self.task_low_dim_state = task_low_dim_state
         self.misc = misc
 
-    def get_low_dim_data(self) -> np.ndarray:
-        """Gets a 1D array of all the low-dimensional obseervations.
-
-        :return: 1D array of observations.
+    def get_proprioceptive_state(self) -> np.ndarray:
+        """Gets a 1D array of all the proprioceptive obseervations.
         """
         low_dim_data = [] if self.gripper_open is None else [[self.gripper_open]]
-        for data in [self.joint_velocities, self.joint_positions,
+        for data in [self.joint_velocities,
+                     self.joint_positions,
                      self.joint_forces,
-                     self.gripper_pose, self.gripper_joint_positions,
-                     self.gripper_touch_forces, self.task_low_dim_state]:
+                     self.gripper_pose,
+                     self.gripper_matrix,
+                     self.gripper_joint_positions,
+                     self.gripper_touch_forces]:
             if data is not None:
-                low_dim_data.append(data)
+                low_dim_data.append(data.ravel())
         return np.concatenate(low_dim_data) if len(low_dim_data) > 0 else np.array([])
+
+    def get_task_state(self) -> np.ndarray:
+        """Gets a 1D array of task state, including object states and task/environment
+        information.
+        """
+        if self.task_low_dim_state is None:
+            return []
+        return self.task_low_dim_state
+
+    def get_low_dim_data(self) -> np.ndarray:
+        """Get all low-dim data.
+        """
+        return np.concatenate([self.get_proprioceptive_state(),
+                               self.get_task_state()])
